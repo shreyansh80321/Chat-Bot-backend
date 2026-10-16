@@ -1,0 +1,9 @@
+import type { Request, Response, NextFunction } from "express";
+import { MessageRole } from "../generated/prisma/enums.js";
+import * as repository from "./conversation.repository.js";
+
+const userId = (req: Request) => { if (!req.user) throw new Error("Unauthorized"); return req.user.userId; };
+export async function list(req: Request, res: Response, next: NextFunction) { try { res.json({ success: true, data: await repository.listConversations(userId(req)) }); } catch (e) { next(e); } }
+export async function create(req: Request, res: Response, next: NextFunction) { try { const conversation = await repository.createConversation(userId(req), req.body?.title); res.status(201).json({ success: true, data: conversation }); } catch (e) { next(e); } }
+export async function messages(req: Request, res: Response, next: NextFunction) { try { const conversation = await repository.findConversation(userId(req), String(req.params.threadId)); if (!conversation) { res.status(404).json({ success: false, message: "Conversation not found." }); return; } res.json({ success: true, data: conversation }); } catch (e) { next(e); } }
+export async function addMessage(req: Request, res: Response, next: NextFunction) { try { const content = typeof req.body?.content === "string" ? req.body.content.trim() : ""; const role = req.body?.role as string; if (!content || !["USER", "ASSISTANT", "SYSTEM"].includes(role)) { res.status(400).json({ success: false, message: "A valid role and content are required." }); return; } const result = await repository.addMessage(userId(req), String(req.params.threadId), role as MessageRole, content); if (!result) { res.status(404).json({ success: false, message: "Conversation not found." }); return; } res.status(201).json({ success: true, data: result[0] }); } catch (e) { next(e); } }

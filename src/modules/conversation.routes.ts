@@ -1,0 +1,10 @@
+import { Router, type Router as RouterType } from "express";
+import { requireAuth } from "../middleware/auth.js";
+import * as controller from "./conversation.controller.js";
+const router: RouterType = Router();
+router.use(requireAuth);
+router.get("/", controller.list);
+router.post("/", controller.create);
+router.get("/:threadId", controller.messages);
+router.post("/:threadId/messages", controller.addMessage);
+export default router;
