@@ -1,0 +1,10 @@
+import { Router, type Router as RouterType } from "express";
+import multer from "multer";
+import { requireAuth } from "../middleware/auth.js";
+import * as controller from "./document.controller.js";
+const router: RouterType = Router();
+router.get("/", requireAuth, controller.list);
+router.get("/:documentId", requireAuth, controller.details);
+const uploadPdf = multer({ storage: multer.memoryStorage(), limits: { fileSize: 10 * 1024 * 1024 }, fileFilter: (_req, file, cb) => cb(null, file.mimetype === "application/pdf") });
+router.post("/upload", requireAuth, uploadPdf.single("file"), controller.upload);
+export default router;
