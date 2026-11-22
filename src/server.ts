@@ -6,12 +6,13 @@ import { errorHandler } from './middleware/error-handler.js';
 import conversationRoutes from './modules/conversation.routes.js';
 import chatRoutes from './modules/chat.routes.js';
 import documentRoutes from './modules/document.routes.js';
+import { env } from './config/env.js';
 dotenv.config();
 const app = express();
 const parsedPort = Number(process.env.PORT);
 const PORT = Number.isInteger(parsedPort) && parsedPort >= 0 && parsedPort < 65536 ? parsedPort : 5000;
 const allowedOrigins = new Set(
-  (process.env.FRONTEND_URLS ?? "http://localhost:3000,http://127.0.0.1:3000")
+  env.FRONTEND_URLS
     .split(",")
     .map((origin) => origin.trim())
     .filter(Boolean),

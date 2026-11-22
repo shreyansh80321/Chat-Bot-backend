@@ -19,4 +19,5 @@ export const env = {
   ACCESS_TOKEN_EXPIRY: getEnv("ACCESS_TOKEN_EXPIRY"),
   REFRESH_TOKEN_EXPIRY: getEnv("REFRESH_TOKEN_EXPIRY"),
   TAVILY_API_KEY: process.env.TAVILY_API_KEY,
+  FRONTEND_URLS: process.env.FRONTEND_URLS ?? "http://localhost:3000,http://127.0.0.1:3000",
 };
